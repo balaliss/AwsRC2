@@ -15,7 +15,7 @@ jobs:
 
     - name: Sync S3 Bucket
       run: |
-        aws s3 sync front-end/ s3://your-s3-bucket-name/ --delete
+        aws s3 sync front-end/ s3://steve-balalis-resume/ --delete
 
     - name: Invalidate CloudFront
       run: |
