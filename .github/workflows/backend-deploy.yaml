@@ -1,0 +1,42 @@
+name: Backend CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        working-directory: back-end
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Run tests
+        working-directory: back-end
+        run: |
+          source venv/bin/activate
+          python -m unittest discover tests
+
+      - name: Deploy to AWS
+        working-directory: back-end
+        env:
+          AWS_ACCESS_KEY_ID: ${{ redacted }}
+          AWS_SECRET_ACCESS_KEY: ${{ redacted }}
+          AWS_DEFAULT_REGION: 'us-east-1'
+        run: |
+          sam build
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
